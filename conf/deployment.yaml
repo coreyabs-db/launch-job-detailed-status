@@ -1,0 +1,17 @@
+build:
+  no_build: true
+environments:
+  default:
+    workflows:
+        - name: "example-dbx-job"
+          tasks:
+            - task_key: "task-1" #
+              deployment_config:
+                  no_package: true
+              notebook_task:
+                  notebook_path: "/Repos/corey.abshire@databricks.com/launch-job-detailed-status/example-job/task-1"
+            - task_key: "task-2" #
+              deployment_config:
+                  no_package: true
+              notebook_task:
+                  notebook_path: "/Repos/corey.abshire@databricks.com/launch-job-detailed-status/example-job/task-2"
