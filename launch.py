@@ -12,7 +12,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+
 def get_api_client():
+    """Retrieve an API client object using creds from the environment."""
     host = os.environ["DATABRICKS_HOST"]
     token = os.environ["DATABRICKS_TOKEN"]
     jobs_api_version = "2.1"
@@ -24,6 +26,7 @@ def get_api_client():
 
 
 def format_task_update_message(task):
+    """Format a single task state for logging / output."""
     message = f"""{task["task_key"]}: {task["state"]["life_cycle_state"]}"""
     if "result_state" in task["state"]:
         message = f"""{message}:{task["state"]["result_state"]}"""
@@ -31,6 +34,7 @@ def format_task_update_message(task):
 
 
 def format_job_update_message(run_info):
+    """Prepare the message we want to log for an entire job."""
     task_life_cycle_states = [
         format_task_update_message(task)
         for task in run_info["tasks"]
@@ -39,8 +43,8 @@ def format_job_update_message(run_info):
     return message
 
 
-
 def wait_run(run_id):
+    """Wait until the given run_id reaches a terminal state and then return it."""
     job_update_polling_interval_secs = 1
     api_client = get_api_client()
     jobs_service = JobsService(api_client)
@@ -58,8 +62,9 @@ def wait_run(run_id):
 
 
 @click.command()
-@click.option('--job-id', help='run-id to get status of')
+@click.option('--job-id', help='JOB-ID to run and track')
 def launch(job_id: str):
+    """Run the given job and wait until the run terminates."""
     api_client = get_api_client()
     jobs_service = JobsService(api_client)
     print(api_client)
